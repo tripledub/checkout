@@ -34,4 +34,20 @@ RSpec.describe DiscountRule do
       end
     end
   end
+
+  describe ':handles?' do
+    subject { rule.handles?(product_id: product_id) }
+
+    context 'when sku of rule matches product_id' do
+      let(:product_id) { '001' }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context 'when sku of rule does not match product_id' do
+      let(:product_id) { '002' }
+
+      it { is_expected.to eq(false) }
+    end
+  end
 end
