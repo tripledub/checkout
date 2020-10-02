@@ -3,6 +3,28 @@ require_relative '../checkout'
 RSpec.describe Checkout do
   subject { described_class.new }
 
+  describe ':scan' do
+    let(:sku) { '001' }
+
+    context 'with an existant item' do
+      it 'does not raise an error' do
+        expect {
+          subject.scan(sku: sku)
+        }.to_not raise_error
+      end
+    end
+
+    context 'with a non-existant item' do
+      let(:sku) { '007' }
+
+      it 'raises an error' do
+        expect {
+          subject.scan(sku: sku)
+        }.to raise_error(Checkout::InvalidProductError)
+      end
+    end
+  end
+
   describe ':total' do
 
     # Product code  | Name                   | Price

@@ -7,10 +7,18 @@ PRODUCTS = [
 ].freeze
 
 class Checkout
+  class InvalidProductError < StandardError; end
+
   DISCOUNT_AT = 60
   DISCOUNT_AMOUNT = 10
 
+  def initialize(rules: [])
+    @rules = rules
+  end
+
   def scan(sku:)
+    raise Checkout::InvalidProductError unless product_for(sku: sku)
+
     items[sku] ||= 0
     items[sku] += 1
   end
