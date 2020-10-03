@@ -10,10 +10,10 @@ class Checkout
   class InvalidProductError < StandardError; end
 
   DISCOUNT_AT = 60
-  DISCOUNT_AMOUNT = 10
+  DISCOUNT_AMOUNT = 10.0
 
-  def initialize(rules: [])
-    @rules = rules
+  def initialize(promotional_rules: [])
+    @promotional_rules = promotional_rules
   end
 
   def scan(sku:)
@@ -28,13 +28,19 @@ class Checkout
       subtotal + price_for(sku: sku, quantity: qty)
     end
 
-    sumtotal >= DISCOUNT_AT ? discounted_total(sumtotal: sumtotal) : sumtotal
+    if sumtotal >= DISCOUNT_AT
+      discounted_total(sumtotal: sumtotal).round(2)
+    else
+      sumtotal.round(2)
+    end
   end
 
   private
 
+  attr_reader :promotional_rules
+
   def discounted_total(sumtotal:)
-    sumtotal - (sumtotal * 0.1)
+    sumtotal - (sumtotal * (DISCOUNT_AMOUNT / 100))
   end
 
   def items
@@ -42,11 +48,22 @@ class Checkout
   end
 
   def price_for(sku:, quantity:)
-    line_item = product_for(sku: sku)
-    line_item.price * quantity
+    rule = rule_for(sku: sku)
+    product = product_for(sku: sku)
+    if rule
+      rule.price_for(quantity: quantity, original_price: product.price)
+    else
+      product.price * quantity
+    end
   end
 
   def product_for(sku:)
     PRODUCTS.find { |product| product.sku == sku }
+  end
+
+  def rule_for(sku:)
+    promotional_rules.find do |rule|
+      rule.is_a?(DiscountRule) && rule.handles?(product_id: sku)
+    end
   end
 end
