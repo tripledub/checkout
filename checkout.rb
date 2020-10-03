@@ -3,9 +3,6 @@
 class Checkout
   class InvalidProductError < StandardError; end
 
-  DISCOUNT_AT = 60
-  DISCOUNT_AMOUNT = 10.0
-
   def initialize(promotional_rules: [])
     @promotional_rules = promotional_rules
   end
@@ -22,19 +19,25 @@ class Checkout
       subtotal + price_for(sku: sku, quantity: qty)
     end
 
-    apply_other_discounts(sumtotal: sumtotal).round(2)
+    apply_generic_discount(sumtotal: sumtotal).round(2)
   end
 
   private
 
   attr_reader :promotional_rules
 
-  def apply_other_discounts(sumtotal:)
-    sumtotal >= DISCOUNT_AT ? discounted_total(sumtotal: sumtotal) : sumtotal
+  def apply_generic_discount(sumtotal:)
+    generic_rule = generic_rule_for_basket
+
+    if generic_rule
+      generic_rule.discount(sumtotal: sumtotal)
+    else
+      sumtotal
+    end
   end
 
-  def discounted_total(sumtotal:)
-    sumtotal - (sumtotal * (DISCOUNT_AMOUNT / 100))
+  def generic_rule_for_basket
+    promotional_rules.find { |rule| rule.is_a?(GenericDiscount) }
   end
 
   def items
