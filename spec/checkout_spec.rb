@@ -87,6 +87,14 @@ RSpec.describe Checkout do
         it 'returns the correct total' do
           expect(subject.total).to eq(73.76)
         end
+
+        context 'products can be added in any order' do
+          let(:skus) { %w(003 002 001 001) }
+
+          it 'returns the correct total' do
+            expect(subject.total).to eq(73.76)
+          end
+        end
       end
     end
   end
