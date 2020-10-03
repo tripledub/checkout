@@ -4,6 +4,7 @@ RSpec.describe DiscountRule do
   let(:original_price) { 15 }
   let(:discount_price) { 12 }
   let(:minimum_amount) { 4 }
+  let(:product) { double("Product", price: original_price) }
 
   let(:rule) do
     described_class.new(
@@ -19,7 +20,7 @@ RSpec.describe DiscountRule do
 
       it 'applies discount' do
         expect(
-          rule.price_for(quantity: quantity, original_price: original_price)
+          rule.price_for(product: product, quantity: quantity)
         ).to eq(discount_price * quantity)
       end
     end
@@ -29,7 +30,7 @@ RSpec.describe DiscountRule do
 
       it 'applies no discount' do
         expect(
-          rule.price_for(quantity: quantity, original_price: original_price)
+          rule.price_for(product: product, quantity: quantity)
         ).to eq(original_price * quantity)
       end
     end

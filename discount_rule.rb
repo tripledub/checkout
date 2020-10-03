@@ -9,11 +9,11 @@ class DiscountRule
     sku == product_id
   end
 
-  def price_for(quantity:, original_price:)
+  def price_for(product:, quantity:)
     if quantity >= minimum_amount
       discount_price * quantity
     else
-      original_price * quantity
+      product.price * quantity
     end
   end
 

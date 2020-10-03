@@ -51,7 +51,7 @@ class Checkout
     rule = rule_for(sku: sku)
     product = product_for(sku: sku)
     if rule
-      rule.price_for(quantity: quantity, original_price: product.price)
+      rule.price_for(product: product, quantity: quantity)
     else
       product.price * quantity
     end
