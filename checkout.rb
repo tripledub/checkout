@@ -1,10 +1,4 @@
-Product = Struct.new(:sku, :price, :title)
-
-PRODUCTS = [
-  Product.new('001', 9.25, 'Lavender heart'),
-  Product.new('002', 45, 'Personalised cufflinks'),
-  Product.new('003', 19.95, 'Kids T-shirt')
-].freeze
+# frozen_string_literal: true
 
 class Checkout
   class InvalidProductError < StandardError; end
@@ -28,16 +22,16 @@ class Checkout
       subtotal + price_for(sku: sku, quantity: qty)
     end
 
-    if sumtotal >= DISCOUNT_AT
-      discounted_total(sumtotal: sumtotal).round(2)
-    else
-      sumtotal.round(2)
-    end
+    apply_other_discounts(sumtotal: sumtotal).round(2)
   end
 
   private
 
   attr_reader :promotional_rules
+
+  def apply_other_discounts(sumtotal:)
+    sumtotal >= DISCOUNT_AT ? discounted_total(sumtotal: sumtotal) : sumtotal
+  end
 
   def discounted_total(sumtotal:)
     sumtotal - (sumtotal * (DISCOUNT_AMOUNT / 100))
@@ -67,3 +61,12 @@ class Checkout
     end
   end
 end
+
+
+Product = Struct.new(:sku, :price, :title)
+
+PRODUCTS = [
+  Product.new('001', 9.25, 'Lavender heart'),
+  Product.new('002', 45, 'Personalised cufflinks'),
+  Product.new('003', 19.95, 'Kids T-shirt')
+].freeze

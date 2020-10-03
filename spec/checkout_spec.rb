@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../checkout'
 require_relative '../discount_rule'
 

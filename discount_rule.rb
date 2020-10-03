@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DiscountRule
   def initialize(discount_price:, minimum_amount:, sku:)
     @discount_price = discount_price
